@@ -363,6 +363,7 @@ def send_topic_subtopics(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     for subtopic in subtopics[topic]:
         keyboard.add(telebot.types.KeyboardButton(subtopic))
+    keyboard.add(telebot.types.KeyboardButton('Вернуться'))
     bot.send_message(message.chat.id, f"Выберите подтему по теме {topic}:", reply_markup=keyboard)
 
 
