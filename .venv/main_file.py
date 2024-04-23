@@ -310,7 +310,8 @@ def check_answer1(message, task_list, image_path, correct_answer):
         # Удаляем временное изображение
         os.remove(temp_image_path)
     else:
-        bot.send_message(chat_id=message.chat.id, text='Задания закончились, ваш результат: ' + str(round(result_of_var / 25 * 100, 2)) + '%')
+        bot.send_message(chat_id=message.chat.id, text='Задания закончились, ваш результат: ' + str(round(result_of_var / 26 * 100, 2)) + '%')
+        result_of_var = 0
 
 
 @bot.message_handler(func=lambda message: message.text == 'Об управлении ботом')
