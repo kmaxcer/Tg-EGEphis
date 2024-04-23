@@ -335,34 +335,34 @@ def callback_handler(call):
 
 # Важно: не забудьте закрыть соединение с базой данных после использования бота
 # Обработчик нажатия на кнопку 'Теория к заданиям'
+# Обработчик нажатия на подраздел физики
 @bot.message_handler(func=lambda message: message.text == 'Теория к заданиям')
 def send_subtopics(message):
-    # Создаем и отображаем клавиатуру с подразделами физики
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    for subtopic in subtopics:
-        button = types.InlineKeyboardButton(subtopic, callback_data=subtopic)
-        markup.add(button)
+    keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    for topic in subtopics.keys():
+        keyboard.add(telebot.types.KeyboardButton(topic))
+    bot.send_message(message.chat.id, "Выберите тему:", reply_markup=keyboard)
 
-    bot.reply_to(message, "Выбери одну из областей физики:", reply_markup=markup)
+# Обработчик для подтем
+@bot.message_handler(func=lambda message: message.text in subtopics.keys())
+def send_topic_subtopics(message):
+    topic = message.text
+    keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    for subtopic in subtopics[topic]:
+        keyboard.add(telebot.types.KeyboardButton(subtopic))
+    bot.send_message(message.chat.id, f"Выберите подтему по теме {topic}:", reply_markup=keyboard)
 
-
-# Обработчик нажатия на подраздел физики
-@bot.callback_query_handler(func=lambda call: call.data in subtopics)
-def send_topic_list(call):
-    topic_list = subtopics[call.data]
-    # Проверяем, есть ли список подтем для выбранного подраздела
-    if topic_list:
-        topic_text = "Подтемы для раздела {}: \n\n".format(call.data)
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        for i, topic in enumerate(topic_list):
-            button = types.InlineKeyboardButton(topic, callback_data=call.data + ' ' + str(i))
-            markup.add(button)
-
-        bot.send_message(call.message.chat.id, topic_text, reply_markup=markup)
-    else:
-        bot.send_message(call.message.chat.id, "Для раздела {} нет доступных подтем.".format(call.data))
-
-
+# Обработчик для подключения к базе данных при выборе подтемы
+@bot.message_handler(func=lambda message: message.text in [subtopic for topics in subtopics.values() for subtopic in topics])
+def connect_to_database(message):
+    subtopic = message.text
+    conn = sqlite3.connect('database.sqlite')
+    cursor = conn.cursor()
+    cursor.execute("SELECT data FROM theory WHERE name=?", (subtopic,))
+    deta = cursor.fetchall()
+    print(deta)
+    # Тут можно подключиться к базе данных и выполнить нужные операции
+    bot.send_message(message.chat.id, text=deta[0][0])
 
 # Обработчик нажатия на кнопку
 @bot.callback_query_handler(func=lambda call: True)
