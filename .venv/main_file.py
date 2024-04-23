@@ -55,12 +55,12 @@ bot_info = {
     "Функциональность бота": "Бот имеет разнообразные и полезные функции направленные на подготовку к ЕГЭ по физике. Здесь вы сможете полностью погрузиться в процесс подготовки.",
     "Структура контента": "При старте бота рекомендуется сразу нажать раздел о боте. В нем вы найдете всю полезную информацию об управлении ботом. Остальные кнопки говорят сами за себя!",
     "Методы обучения": "Наш бот предлагает разнообразные методы обучения, направленные на эффективное усвоение теоретического материала и закрепление полученных знаний через решение задач.",
-    "Инструкции по использованию": "При нажатии на каждый раздел бот предоставит вам полную инструкцию о том, как действовать дальше. Читайте внимательно!",
+    "Инструкции": "При нажатии на каждый раздел бот предоставит вам полную инструкцию о том, как действовать дальше. Читайте внимательно!",
     "Правила использования": "Используйте бот так, как пожелаете нужным и полезным!",
     "О разработчике": "Меня зовут Максим и я учусь в 10-ом классе. На создание данного бота меня вдохновила ОЧЕНЬ(нет) воодушевляющая мысль о сдаче ЕГЭ по физике через год.",
     "Помощь и ресурсы": "Все ресурсы я брал из открытых источников. Вы также можете у меня их копировать.",
-    "Авторские права и использование данных": "Без использования авторских прав. Код и материалы принадлежат Человечеству и мне :)",
-    "Обновления и нововведения": "Я постараюсь сохранить поддержку версий бота и добавлять новые материалы."
+    "Авторские права": "Без использования авторских прав. Код и материалы принадлежат Человечеству и мне :)",
+    "Обновления": "Я постараюсь сохранить поддержку версий бота и добавлять новые материалы."
 }
 
 
@@ -315,30 +315,15 @@ def check_answer1(message, task_list, image_path, correct_answer):
 
 @bot.message_handler(func=lambda message: message.text == 'Об управлении ботом')
 def about_bot(message):
-    # Выполняем запрос к базе данных
-    # Создаем и отображаем клавиатуру с подразделами физики
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    for subtopic in bot_info:
-        button = types.InlineKeyboardButton(subtopic, callback_data=subtopic)
-        markup.add(button)
+    keyboard = types.InlineKeyboardMarkup(row_width=1)
+    for key in bot_info.keys():
+        keyboard.add(types.InlineKeyboardButton(text=key, callback_data=key))
+    bot.send_message(message.chat.id, "Выберите команду:", reply_markup=keyboard)
 
-    bot.reply_to(message, "Выбери одну из областей физики:", reply_markup=markup)
-
-
-@bot.callback_query_handler(func=lambda call: call.data in bot_info)
-def send_backinfo(call):
-    topic_list = subtopics[call.data]
-    # Проверяем, есть ли список подтем для выбранного подраздела
-    if topic_list:
-        topic_text = "Отвечаю, \n\n".format(call.data)
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        for i, topic in enumerate(topic_list):
-            button = types.InlineKeyboardButton(topic, callback_data=call.data + ' ' + str(i))
-            markup.add(button)
-
-        bot.send_message(call.message.chat.id, topic_text, reply_markup=markup)
-    else:
-        bot.send_message(call.message.chat.id, "Для раздела {} нет доступных подтем.".format(call.data))
+@bot.callback_query_handler(func=lambda call: call.data in bot_info.keys())
+def command_handler(call):
+    command = call.data
+    bot.send_message(call.message.chat.id, bot_info[command])
 
 
 # Обрабатываем нажатия на кнопки
