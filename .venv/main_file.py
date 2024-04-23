@@ -9,8 +9,6 @@ import hashlib
 
 result_of_var = 0
 task_num = 0
-
-
 def get_data_by_name(name):
     # Подключаемся к базе данных
     conn = sqlite3.connect('database.sqlite')
@@ -30,33 +28,27 @@ def get_data_by_name(name):
     else:
         return None
 
-
 # Замените 'TOKEN' на ваш токен доступа
 bot = telebot.TeleBot('7089398283:AAFDLKbuqH-2ai324BokTZWzeD-12ObwvDc')
 
 # Подразделы физики
 subtopics = {
-    'Кинематика': ['Скорость', 'Ускорение', 'Равномерное и равноускоренное прямолинейное движение',
-                   'Прямолинейное движение и движение по окружности'],
-    'Динамика': ['Закон Ньютона', 'Равнодействующая', 'Закон всемирного тяготения', 'Сила трения', 'Давление',
-                 'Сила Архимеда'],
+    'Кинематика': ['Скорость', 'Ускорение', 'Равномерное и равноускоренное прямолинейное движение', 'Прямолинейное движение и движение по окружности'],
+    'Динамика': ['Закон Ньютона', 'Равнодействующая', 'Закон всемирного тяготения', 'Сила трения', 'Давление', 'Сила Архимеда'],
     'Законы сохранения': ['Закон сохранения импульса', 'Законы изменения и сохранения энергии'],
-    'Термодинамика': ['Закон Гука', 'Закон Ампера', 'Закон Фарадея', 'Уравнение состояния идеального газа',
-                      'Изопроцессы',
-                      'Процессы нагревания, плавления, парообразования, горения', 'Первое начало термодинамики',
-                      'Тепловые машины и их циклы', 'КПД'],
-    'Электродинамика': ['Электрический заряд', 'Закон сохранения заряда', 'Закон Кулона',
-                        'Напряженность и потенциал электростатического поля',
-                        'Конденсатор', 'Электрический ток', 'Сила тока', 'Сопротивление', 'Закон Ома',
-                        'Закон Джоуля-Ленца',
+    'Термодинамика': ['Закон Гука', 'Закон Ампера', 'Закон Фарадея', 'Уравнение состояния идеального газа', 'Изопроцессы',
+                       'Процессы нагревания, плавления, парообразования, горения', 'Первое начало термодинамики',
+                       'Тепловые машины и их циклы', 'КПД'],
+    'Электродинамика': ['Электрический заряд', 'Закон сохранения заряда', 'Закон Кулона', 'Напряженность и потенциал электростатического поля',
+                        'Конденсатор', 'Электрический ток', 'Сила тока', 'Сопротивление', 'Закон Ома', 'Закон Джоуля-Ленца',
                         'Магнитное поле', 'Сила Лоренца', 'Сила Ампера', 'Электромагнитная индукция', 'Правило Ленца',
                         'Катушка индуктивности и явление самоиндукции', 'Электромагнитные колебания и волны'],
     'Оптика': ['Геометрическая оптика', 'Отражение и преломление света', 'Тень и полутень', 'Виды и свойства линз',
                'Построение изображения в линзах', 'Давление света'],
-    'Кванотвая физика': ['Энергетические переходы и СТО', 'Импульс и энергия фотона', 'Фотоэффект',
-                         'Уравнение Эйнштейна для фотоэффекта',
-                         'Строение атома', 'Ядерные реакции', 'Законы радиоактивного распада']
+    'Кванотвая физика': ['Энергетические переходы и СТО', 'Импульс и энергия фотона', 'Фотоэффект', 'Уравнение Эйнштейна для фотоэффекта',
+                'Строение атома', 'Ядерные реакции', 'Законы радиоактивного распада']
 }
+
 
 bot_info = {
     "Цель и задачи бота": "Приветствуем тебя в боте для подготовки к экзамену ЕГЭ по физике! Наш бот создан с целью помочь тебе эффективно подготовиться к сдаче экзамена, предоставив удобный и доступный инструмент для изучения ключевых тем и заданий по физике.",
@@ -84,7 +76,6 @@ def send_welcome(message):
     markup.add(itembtn1, itembtn2, itembtn3, itembtn4)
 
     bot.reply_to(message, "Привет! Я бот для подготовки к ЕГЭ по физике. Выбери одну из опций:", reply_markup=markup)
-
 
 @bot.message_handler(func=lambda message: message.text == 'Составить случайный вариант')
 def random_variant(message):
@@ -319,8 +310,7 @@ def check_answer1(message, task_list, image_path, correct_answer):
         # Удаляем временное изображение
         os.remove(temp_image_path)
     else:
-        bot.send_message(chat_id=message.chat.id,
-                         text='Задания закончились, ваш результат: ' + str(round(result_of_var / 26 * 100, 2)) + '%')
+        bot.send_message(chat_id=message.chat.id, text='Задания закончились, ваш результат: ' + str(round(result_of_var / 26 * 100, 2)) + '%')
         result_of_var = 0
 
 
@@ -330,7 +320,6 @@ def about_bot(message):
     for key in bot_info.keys():
         keyboard.add(types.InlineKeyboardButton(text=key, callback_data=key))
     bot.send_message(message.chat.id, "Выберите команду:", reply_markup=keyboard)
-
 
 @bot.callback_query_handler(func=lambda call: call.data in bot_info.keys())
 def command_handler(call):
@@ -353,10 +342,9 @@ def send_subtopics(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     for topic in subtopics.keys():
         keyboard.add(telebot.types.KeyboardButton(topic))
+    keyboard.add(telebot.types.KeyboardButton('Вернуться'))
     bot.send_message(message.chat.id, "Выберите тему:", reply_markup=keyboard)
 
-
-# Обработчик для подтем
 @bot.message_handler(func=lambda message: message.text in subtopics.keys())
 def send_topic_subtopics(message):
     topic = message.text
@@ -366,20 +354,28 @@ def send_topic_subtopics(message):
     keyboard.add(telebot.types.KeyboardButton('Вернуться'))
     bot.send_message(message.chat.id, f"Выберите подтему по теме {topic}:", reply_markup=keyboard)
 
-
-# Обработчик для подключения к базе данных при выборе подтемы
-@bot.message_handler(
-    func=lambda message: message.text in [subtopic for topics in subtopics.values() for subtopic in topics])
+@bot.message_handler(func=lambda message: message.text in [subtopic for topics in subtopics.values() for subtopic in topics])
 def connect_to_database(message):
     subtopic = message.text
     conn = sqlite3.connect('database.sqlite')
     cursor = conn.cursor()
     cursor.execute("SELECT data FROM theory WHERE name=?", (subtopic,))
     deta = cursor.fetchall()
-    print(deta)
-    # Тут можно подключиться к базе данных и выполнить нужные операции
+    conn.close()  # закрытие соединения после использования
     bot.send_message(message.chat.id, text=deta[0][0])
 
+@bot.message_handler(func=lambda message: message.text == 'Вернуться')
+def start_again(message):
+    # Создаем и отображаем клавиатуру с кнопками
+    markup = types.ReplyKeyboardMarkup(row_width=2)
+    itembtn1 = types.KeyboardButton('Теория к заданиям')
+    itembtn2 = types.KeyboardButton('Составить случайный вариант')
+    itembtn3 = types.KeyboardButton('Задания определенного типа')
+    itembtn4 = types.KeyboardButton('Об управлении ботом')
+    markup.add(itembtn1, itembtn2, itembtn3, itembtn4)
+
+    bot.reply_to(message, "Привет! Я бот для подготовки к ЕГЭ по физике. Выбери одну из опций:",
+                 reply_markup=markup)
 
 # Обработчик нажатия на кнопку
 @bot.callback_query_handler(func=lambda call: True)
